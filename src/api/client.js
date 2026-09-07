@@ -1,8 +1,10 @@
 import axios from "axios";
 import { mockAdapter } from "./mock/handlers";
 
-const USE_MOCKS = String(import.meta.env.VITE_USE_MOCKS ?? "true") === "true";
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+// Par defaut, le frontend cible le backend NestJS. Passer VITE_USE_MOCKS=true
+// pour retomber sur la couche de donnees simulee (aucun backend requis).
+const USE_MOCKS = String(import.meta.env.VITE_USE_MOCKS ?? "false") === "true";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 export const TOKEN_KEY = "meredian.token";
 
@@ -39,6 +41,16 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+function extractMessage(error) {
+  const data = error.response?.data;
+  // Backend NestJS : { error: { message: string | string[] } }.
+  // Filtre de validation : { message: string[] }. Mock : { message: string }.
+  const raw = data?.error?.message ?? data?.message ?? data?.error;
+  if (Array.isArray(raw)) return raw.join(" · ");
+  if (typeof raw === "string" && raw) return raw;
+  return error.message || "Erreur reseau — verifie ta connexion.";
+}
+
 client.interceptors.response.use(
   (res) => res,
   (error) => {
@@ -49,11 +61,7 @@ client.interceptors.response.use(
         window.dispatchEvent(new CustomEvent("meredian:unauthorized"));
       }
     }
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Erreur reseau — verifie ta connexion.";
-    return Promise.reject(Object.assign(new Error(message), { status, raw: error }));
+    return Promise.reject(Object.assign(new Error(extractMessage(error)), { status, raw: error }));
   }
 );
 
