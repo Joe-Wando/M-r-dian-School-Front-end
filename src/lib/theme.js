@@ -21,7 +21,8 @@ export const CATEGORY_NAMES = Object.keys(CATEGORIES);
 
 export const LEVELS = ["L1", "L2", "L3", "Formation Pro"];
 
-export const COURSE_TEMPLATES = ["Theorique illustre", "Pratique guidee", "Mixte"];
+// Libelles exacts attendus par l'API (architecture-technique.md §2.2).
+export const COURSE_TEMPLATES = ["Théorique illustré", "Pratique guidée", "Mixte"];
 
 export const SECTION_TYPES = [
   { value: "reading", label: "Lecture (texte)" },

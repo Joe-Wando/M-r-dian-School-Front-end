@@ -185,4 +185,5 @@ export const seedUsers = [
   { id: "u-demo", name: "Etudiant Demo", email: "demo@meredian.dev", password: "demo1234", role: "user" },
 ];
 
-export const CORRECTION_PRICE = 6000;
+// Aligne sur le tarif fixe cote backend (WorkSubmissionsService.CORRECTION_PRICE).
+export const CORRECTION_PRICE = 5000;

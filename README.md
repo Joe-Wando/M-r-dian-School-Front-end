@@ -40,21 +40,33 @@ npm run dev               # http://localhost:5173
 
 ### Variables d'environnement (`.env`)
 
-| Variable | Role |
-|---|---|
-| `VITE_API_URL` | URL du backend REST (voir `docs/architecture-technique.md`). |
-| `VITE_USE_MOCKS` | `true` = le frontend tourne sur une **couche de donnees simulee** en memoire (aucun backend requis). `false` = appels reels vers `VITE_API_URL`. |
-
-Tant que le backend n'est pas deploye, laisser `VITE_USE_MOCKS=true`. La couche mock
-(`src/api/mock/`) reproduit tous les endpoints de `docs/architecture-technique.md`, avec
-persistance dans `localStorage` (auth, progression, CRUD admin, messages…).
-
-### Comptes de demonstration (mode mock)
-
-| Role | Email | Mot de passe |
+| Variable | Role | Defaut |
 |---|---|---|
-| Admin | `admin@meredian.dev` | `admin1234` |
-| Utilisateur | `demo@meredian.dev` | `demo1234` |
+| `VITE_API_URL` | URL du backend NestJS, **prefixe `/api` inclus**. | `http://localhost:4000/api` |
+| `VITE_USE_MOCKS` | `false` = appels reels vers `VITE_API_URL` (backend requis). `true` = couche de donnees simulee en memoire, aucun backend. | `false` |
+
+**Par defaut le frontend est branche sur le backend NestJS.** Le lancer :
+
+```bash
+# dans le repo backend
+npm run start:dev        # http://localhost:4000, apres migrate + seed
+```
+
+Le backend accepte l'origine `http://localhost:5173` (CORS). La traduction entre le
+contrat du frontend (snake_case, cf. `docs/architecture-technique.md`) et l'API
+NestJS (camelCase, quelques formes differentes) est faite dans `src/api/index.js`.
+
+Pour developper sans backend, mettre `VITE_USE_MOCKS=true` : la couche mock
+(`src/api/mock/`) reproduit tous les endpoints avec persistance `localStorage`.
+
+### Comptes de demonstration
+
+| Contexte | Role | Email | Mot de passe |
+|---|---|---|---|
+| Backend (seed) | Admin | `admin@meredian.io` | `ChangeMe!2026` |
+| Backend (seed) | Utilisateur | `etudiant@meredian.io` | `Etudiant!2026` |
+| Mode mock | Admin | `admin@meredian.dev` | `admin1234` |
+| Mode mock | Utilisateur | `demo@meredian.dev` | `demo1234` |
 
 ### Autres commandes
 
