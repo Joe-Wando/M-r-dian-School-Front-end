@@ -63,7 +63,7 @@ Pour developper sans backend, mettre `VITE_USE_MOCKS=true` : la couche mock
 
 | Contexte | Role | Email | Mot de passe |
 |---|---|---|---|
-| Backend (seed) | Admin | `admin@meredian.io` | `ChangeMe!2026` |
+| Backend (seed) | Admin | `admin@meredian.io` | valeur de `ADMIN_PASSWORD` (`.env` du backend) |
 | Backend (seed) | Utilisateur | `etudiant@meredian.io` | `Etudiant!2026` |
 | Mode mock | Admin | `admin@meredian.dev` | `admin1234` |
 | Mode mock | Utilisateur | `demo@meredian.dev` | `demo1234` |
