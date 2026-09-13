@@ -196,7 +196,7 @@ function WorkSubmissionForm({ price, onSubmit, loading, error }) {
     e.preventDefault();
     setTouched(true);
     if (!file) return;
-    onSubmit({ file_name: file.name, note });
+    onSubmit({ file, note });
   }
 
   return (

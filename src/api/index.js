@@ -1,6 +1,30 @@
 import { client } from "./client";
 
 const unwrap = (p) => p.then((r) => r.data);
+const MULTIPART = { headers: { "Content-Type": "multipart/form-data" } };
+
+function toFormData(fields = {}) {
+  const fd = new FormData();
+  Object.entries(fields).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== "") fd.append(k, v);
+  });
+  return fd;
+}
+
+/** Declenche le telechargement navigateur d'une reponse axios (responseType: "blob"). */
+function triggerBrowserDownload(res, fallbackName = "fichier") {
+  const disposition = res.headers?.["content-disposition"] || "";
+  const match = /filename\*?=(?:UTF-8'')?"?([^;"]+)"?/i.exec(disposition);
+  const filename = match ? decodeURIComponent(match[1]) : fallbackName;
+  const url = URL.createObjectURL(res.data);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 /* ------------------------------------------------------------------ *
  * Adaptateurs backend NestJS <-> contrat du frontend.
@@ -131,6 +155,29 @@ function mapQaOut(s = {}) {
     duration_minutes: minutes,
     max_spots: s.maxSpots ?? s.max_spots ?? 0,
     spots_left: s.spotsLeft ?? s.spots_left ?? 0,
+  };
+}
+
+function mapWorkSubmissionOut(s = {}) {
+  return {
+    ...s,
+    original_file_name: s.originalFileName ?? s.original_file_name ?? "",
+    feedback_file_name: s.feedbackOriginalFileName ?? s.feedback_file_name ?? null,
+    reviewed_at: s.reviewedAt ?? s.reviewed_at ?? null,
+    created_at: s.createdAt ?? s.created_at ?? null,
+    // Absents (pas d'inclusion "user" cote backend) plutot que "" : evite d'ecraser
+    // une valeur deja connue quand on fusionne la reponse dans une liste existante.
+    ...(s.user && { student_name: s.user.name ?? "", student_email: s.user.email ?? "" }),
+  };
+}
+
+function mapBookingOut(b = {}) {
+  return {
+    ...b,
+    scheduled_at: b.scheduledAt ?? b.scheduled_at ?? null,
+    duration_minutes: b.durationMinutes ?? b.duration_minutes ?? 0,
+    meeting_link: b.meetingLink ?? b.meeting_link ?? null,
+    ...(b.user && { student_name: b.user.name ?? "", student_email: b.user.email ?? "" }),
   };
 }
 
@@ -273,14 +320,43 @@ export const api = {
   qaSessions: () =>
     unwrap(client.get("/qa-sessions")).then((list) => (list || []).map(mapQaOut)),
   registerQa: (id) => unwrap(client.post(`/qa-sessions/${id}/register`)),
+  createQaSession: (payload) =>
+    unwrap(
+      client.post("/qa-sessions", {
+        topic: payload.topic,
+        scheduledAt: payload.scheduled_at ?? payload.scheduledAt,
+        durationMinutes: Number(payload.duration_minutes ?? payload.durationMinutes),
+        maxSpots: Number(payload.max_spots ?? payload.maxSpots),
+      })
+    ).then(mapQaOut),
   submitWork: (payload) =>
     unwrap(
-      client.post("/work-submissions", {
-        fileUrl:
-          payload.file_url ?? payload.fileUrl ?? payload.file_name ?? payload.fileName ?? "document.pdf",
-        note: payload.note ?? "",
-      })
+      client.post("/work-submissions", toFormData({ file: payload.file, note: payload.note }), MULTIPART)
     ),
+
+  // Corrections de travaux (admin)
+  adminListWorkSubmissions: () =>
+    unwrap(client.get("/work-submissions/admin")).then((list) => (list || []).map(mapWorkSubmissionOut)),
+  adminReviewWorkSubmission: (id, { status, feedback, feedbackFile } = {}) =>
+    unwrap(
+      client.patch(
+        `/work-submissions/${id}/review`,
+        toFormData({ status, feedback, feedbackFile }),
+        MULTIPART
+      )
+    ).then(mapWorkSubmissionOut),
+  downloadWorkSubmissionFile: (id, variant = "original") =>
+    client
+      .get(`/work-submissions/${id}/download${variant === "feedback" ? "/feedback" : ""}`, {
+        responseType: "blob",
+      })
+      .then((res) => triggerBrowserDownload(res)),
+
+  // Mentorat (admin)
+  adminListBookings: () =>
+    unwrap(client.get("/mentoring/admin/bookings")).then((list) => (list || []).map(mapBookingOut)),
+  adminUpdateBooking: (id, payload) =>
+    unwrap(client.patch(`/mentoring/admin/bookings/${id}`, payload)).then(mapBookingOut),
 
   // Vitrine & contact
   getProfile: () => unwrap(client.get("/profile")).then(mapProfileOut),

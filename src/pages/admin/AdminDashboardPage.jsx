@@ -8,9 +8,21 @@ import ErrorState from "../../components/ui/ErrorState";
 import CategoryBadge from "../../components/ui/CategoryBadge";
 import CourseFormModal from "../../components/admin/CourseFormModal";
 import ModuleManagerModal from "../../components/admin/ModuleManagerModal";
+import CorrectionsPanel from "../../components/admin/CorrectionsPanel";
+import MentoringPanel from "../../components/admin/MentoringPanel";
+import QaSessionsPanel from "../../components/admin/QaSessionsPanel";
 import { formatPrice } from "../../lib/format";
 
+const TABS = [
+  { key: "overview", label: "Vue d'ensemble" },
+  { key: "corrections", label: "Corrections" },
+  { key: "mentorat", label: "Mentorat" },
+  { key: "qa", label: "Sessions Q&R" },
+];
+
 export default function AdminDashboardPage() {
+  const [tab, setTab] = useState("overview");
+
   const stats = useApi(() => api.adminStats(), []);
   const courses = useApi(() => api.listCourses(), []);
   const messages = useApi(() => api.contactMessages(), []);
@@ -46,6 +58,26 @@ export default function AdminDashboardPage() {
         </p>
       </header>
 
+      <nav className="flex gap-1 overflow-x-auto border-b border-line bg-white px-4 md:px-8">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`shrink-0 border-b-2 px-3 py-3 text-sm font-medium ${
+              tab === t.key ? "border-accent text-accent" : "border-transparent text-gray-500 hover:text-ink"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
+
+      {tab === "corrections" && <CorrectionsPanel />}
+      {tab === "mentorat" && <MentoringPanel />}
+      {tab === "qa" && <QaSessionsPanel />}
+
+      {tab === "overview" && (
+        <>
       <div className="grid grid-cols-2 gap-4 border-b border-line bg-white px-4 py-6 md:px-8 lg:grid-cols-4">
         {stats.loading && <Spinner />}
         {stats.error && <ErrorState message={stats.error} onRetry={stats.reload} />}
@@ -180,6 +212,8 @@ export default function AdminDashboardPage() {
           ))}
         </div>
       </div>
+        </>
+      )}
 
       {adding && (
         <CourseFormModal

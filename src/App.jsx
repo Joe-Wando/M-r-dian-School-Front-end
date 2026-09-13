@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
+import AdminLayout from "./components/layout/AdminLayout";
 import { RequireAuth, RequireAdmin } from "./components/RouteGuards";
 
 import HomePage from "./pages/HomePage";
@@ -35,17 +36,21 @@ export default function App() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <AdminDashboardPage />
-            </RequireAdmin>
-          }
-        />
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
+
+      {/* Le dashboard admin a sa propre coquille, distincte du site public. */}
+      <Route
+        path="/admin"
+        element={
+          <RequireAdmin>
+            <AdminLayout>
+              <AdminDashboardPage />
+            </AdminLayout>
+          </RequireAdmin>
+        }
+      />
 
       {/* La lecture d'un cours occupe tout l'ecran (pas de footer). */}
       <Route element={<Layout withFooter={false} />}>
