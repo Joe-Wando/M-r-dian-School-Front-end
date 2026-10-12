@@ -15,14 +15,14 @@ export default function CourseSidebar({ title, modules, activeSectionId, onSelec
   return (
     <aside className="w-full shrink-0 border-r border-line bg-white lg:w-72">
       <div className="border-b border-line p-5">
-        <h2 className="text-base font-semibold leading-snug">{title}</h2>
+        <h2 className="text-base font-semibold leading-snug text-navy">{title}</h2>
       </div>
       <nav className="py-2">
         {modules.map((mod, i) => {
           const isOpen = open === mod.id;
           const isLocked = mod.status === "locked";
           return (
-            <div key={mod.id} className="border-b border-gray-100">
+            <div key={mod.id} className="border-b border-line">
               <button
                 disabled={isLocked}
                 onClick={() => setOpen(isOpen ? null : mod.id)}
@@ -49,7 +49,7 @@ export default function CourseSidebar({ title, modules, activeSectionId, onSelec
                     <button
                       key={s.id}
                       onClick={() => onSelect(mod, s)}
-                      className={`flex items-center gap-2 rounded px-2 py-1.5 text-left text-xs ${
+                      className={`flex items-center gap-2 rounded-xl px-2.5 py-2 text-left text-xs ${
                         activeSectionId === s.id ? "bg-accent-soft text-accent" : "text-muted"
                       }`}
                     >

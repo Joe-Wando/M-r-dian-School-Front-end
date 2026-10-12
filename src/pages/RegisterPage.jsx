@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../components/Logo";
+import AuthShell from "../components/ui/AuthShell";
 import Field from "../components/ui/Field";
 import { useAuth } from "../context/AuthContext";
 
@@ -39,13 +39,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-6 px-4 py-14">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <Logo variant="icon" to={null} />
-        <h1 className="text-2xl font-semibold">Creer un compte</h1>
-      </div>
-
-      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+    <AuthShell title="Creer un compte">
+      <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         <Field label="Nom" error={errors.name} required>
           <input
             className="field"
@@ -84,17 +79,17 @@ export default function RegisterPage() {
 
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
-        <button type="submit" className="btn-primary" disabled={submitting}>
+        <button type="submit" className="btn-primary mt-2 !py-4" disabled={submitting}>
           {submitting ? "Creation…" : "Creer mon compte"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-muted">
+      <p className="text-center text-sm text-muted md:text-left">
         Deja inscrit ?{" "}
         <Link to="/connexion" className="font-medium text-accent">
           Se connecter
         </Link>
       </p>
-    </div>
+    </AuthShell>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Logo from "../components/Logo";
+import AuthShell from "../components/ui/AuthShell";
 import Field from "../components/ui/Field";
 import { useAuth } from "../context/AuthContext";
 import { USE_MOCKS } from "../api/client";
@@ -40,13 +40,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-6 px-4 py-14">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <Logo variant="icon" to={null} />
-        <h1 className="text-2xl font-semibold">Connexion</h1>
-      </div>
-
-      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+    <AuthShell title="Connexion">
+      <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
         <Field label="Email" error={errors.email} required>
           <input
             type="email"
@@ -68,12 +63,12 @@ export default function LoginPage() {
 
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
-        <button type="submit" className="btn-primary" disabled={submitting}>
+        <button type="submit" className="btn-primary mt-2 !py-4" disabled={submitting}>
           {submitting ? "Connexion…" : "Se connecter"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-muted">
+      <p className="text-center text-sm text-muted md:text-left">
         Pas encore de compte ?{" "}
         <Link to="/inscription" className="font-medium text-accent">
           Creer un compte
@@ -81,10 +76,10 @@ export default function LoginPage() {
       </p>
 
       {USE_MOCKS && (
-        <p className="rounded-md bg-accent-soft px-3 py-2 text-center text-xs text-accent">
+        <p className="rounded-2xl bg-accent-soft px-4 py-3 text-center text-xs font-medium text-accent">
           Demo — admin@meredian.dev / admin1234 · demo@meredian.dev / demo1234
         </p>
       )}
-    </div>
+    </AuthShell>
   );
 }

@@ -24,8 +24,8 @@ export default function Logo({ variant = "icon", to = "/", className = "", muted
       <span className="flex items-center gap-2">
         {img}
         <span
-          className="text-base font-semibold tracking-tight"
-          style={{ color: muted ? "#6B7280" : "#1A1A1A" }}
+          className="font-display text-base font-bold tracking-tight"
+          style={{ color: muted ? "#5B6684" : "#0B1F4D" }}
         >
           Meredian
         </span>

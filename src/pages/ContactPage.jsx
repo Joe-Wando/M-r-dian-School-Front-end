@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Send, Mail, MapPin, CheckCircle2 } from "lucide-react";
+import { Send, Mail, MapPin, CheckCircle2, Clock } from "lucide-react";
 import api from "../api";
 import { useMutation } from "../hooks/useMutation";
 import Field from "../components/ui/Field";
+import PageHeader from "../components/ui/PageHeader";
+import { Starburst, Underlined } from "../components/ui/Decor";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -29,69 +31,83 @@ export default function ContactPage() {
 
   return (
     <div>
-      <header className="border-b border-line bg-white px-4 pb-6 pt-10 md:px-8">
-        <h1 className="text-2xl font-semibold md:text-3xl">Contact</h1>
-        <p className="mt-1.5 max-w-xl text-sm text-muted">
-          Une question sur un cours, un projet de collaboration, ou juste envie d'echanger — ecris-moi.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Contact"
+        title={
+          <>
+            Parlons de <Underlined>ton projet</Underlined>
+          </>
+        }
+        subtitle="Une question sur un cours, un projet de collaboration, ou juste envie d'echanger écrivez moi."
+      />
 
-      <div className="flex flex-col gap-10 bg-white px-4 py-8 md:flex-row md:px-8">
-        <form onSubmit={onSubmit} className="flex max-w-lg flex-1 flex-col gap-4" noValidate>
-          {sent && (
-            <p className="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-              <CheckCircle2 size={16} /> Message envoye — reponse generalement sous 24 a 48h.
-            </p>
-          )}
-          <Field label="Nom" error={errors.name} required>
-            <input
-              className="field"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </Field>
-          <Field label="Email" error={errors.email} required>
-            <input
-              type="email"
-              className="field"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </Field>
-          <Field label="Message" error={errors.message} required>
-            <textarea
-              rows={5}
-              className="field resize-none"
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
-            />
-          </Field>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button type="submit" className="btn-primary self-start" disabled={loading}>
-            <Send size={14} /> {loading ? "Envoi…" : "Envoyer"}
-          </button>
-        </form>
+      <section className="px-4 pt-8 md:px-8">
+        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-navy/10 lg:grid-cols-5">
+          <aside className="relative overflow-hidden bg-navy p-8 text-white sm:p-12 lg:col-span-2">
+            <h2 className="text-2xl font-bold leading-[1.25] sm:text-3xl">Coordonnees</h2>
+            <ul className="mt-8 space-y-5 text-sm font-medium">
+              <li className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sun">
+                  <Mail size={16} />
+                </span>
+                <span className="break-all">jonathan6wando@gmail.com</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sun">
+                  <MapPin size={16} />
+                </span>
+                Dakar, Sénégal
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sun">
+                  <Clock size={16} />
+                </span>
+                Reponse generalement sous 24 a 48h
+              </li>
+            </ul>
+            <Starburst className="relative mt-12 h-28 w-28 rotate-12 lg:absolute lg:-bottom-4 lg:right-6 lg:mt-0 lg:h-32 lg:w-32">
+              Reponse sous 48h
+            </Starburst>
+          </aside>
 
-        <div className="flex w-full shrink-0 flex-col gap-4 md:w-64">
-          <div className="rounded-lg border border-line p-4">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Coordonnees
-            </p>
-            <p className="flex items-center gap-2 text-sm text-gray-700">
-              <Mail size={14} /> contact@exemple.com
-            </p>
-            <p className="mt-1.5 flex items-center gap-2 text-sm text-gray-700">
-              <MapPin size={14} /> Zurich, Suisse
-            </p>
-          </div>
-          <div className="rounded-lg border border-line p-4">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Delai de reponse
-            </p>
-            <p className="text-sm text-gray-700">Generalement sous 24 a 48h.</p>
-          </div>
+          <form onSubmit={onSubmit} className="flex flex-col gap-5 p-6 sm:p-10 lg:col-span-3 lg:p-12" noValidate>
+            {sent && (
+              <p className="flex items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                <CheckCircle2 size={16} /> Message envoye — reponse generalement sous 24 a 48h.
+              </p>
+            )}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Nom" error={errors.name} required>
+                <input
+                  className="field"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </Field>
+              <Field label="Email" error={errors.email} required>
+                <input
+                  type="email"
+                  className="field"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </Field>
+            </div>
+            <Field label="Message" error={errors.message} required>
+              <textarea
+                rows={6}
+                className="field resize-none"
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+              />
+            </Field>
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <button type="submit" className="btn-primary self-start !px-8 !py-4" disabled={loading}>
+              <Send size={15} /> {loading ? "Envoi…" : "Envoyer"}
+            </button>
+          </form>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

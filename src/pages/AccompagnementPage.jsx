@@ -9,6 +9,8 @@ import Spinner from "../components/ui/Spinner";
 import ErrorState from "../components/ui/ErrorState";
 import Modal from "../components/ui/Modal";
 import Field from "../components/ui/Field";
+import PageHeader from "../components/ui/PageHeader";
+import { Underlined } from "../components/ui/Decor";
 import { formatPrice } from "../lib/format";
 import { CORRECTION_PRICE } from "../api/mock/data";
 
@@ -35,35 +37,37 @@ export default function AccompagnementPage() {
 
   return (
     <div>
-      <header className="border-b border-line bg-white px-4 pb-6 pt-10 md:px-8">
-        <h1 className="text-2xl font-semibold md:text-3xl">Accompagnement personnel</h1>
-        <p className="mt-1.5 max-w-2xl text-sm text-muted">
-          Au-dela des cours, un suivi individuel pour avancer plus vite : mentorat, retours sur tes
-          travaux, et sessions de questions en direct.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Accompagnement personnel"
+        title={
+          <>
+            Avance plus vite, <Underlined>bien entoure</Underlined>
+          </>
+        }
+        subtitle="Au-dela des cours, un suivi individuel pour avancer plus vite : mentorat, retours sur tes travaux, et sessions de questions en direct."
+      />
 
       {/* Mentorat */}
-      <section className="border-b border-line bg-white px-4 py-8 md:px-8">
-        <SectionTitle icon={Users}>Mentorat 1-a-1</SectionTitle>
-        <p className="mb-5 text-sm text-muted">
+      <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">
+        <SectionTitle icon={Users} n={1}>Mentorat 1-a-1</SectionTitle>
+        <p className="mb-8 max-w-2xl text-muted">
           Reserve un creneau individuel, en visio, pour avancer sur ce qui te bloque vraiment.
         </p>
         {slots.loading && <Spinner />}
         {slots.error && <ErrorState message={slots.error} onRetry={slots.reload} />}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {slots.data?.map((opt) => (
-            <div key={opt.id} className="flex flex-col gap-3 rounded-lg border border-line p-5">
+            <div key={opt.id} className="card flex flex-col gap-4 p-7 transition hover:-translate-y-1 hover:shadow-xl">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                  <Clock size={14} /> {opt.label}
+                <span className="flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 font-display text-xs font-semibold text-accent">
+                  <Clock size={13} /> {opt.label}
                 </span>
-                <span className="text-lg font-semibold">{formatPrice(opt.price)}</span>
+                <span className="font-display text-2xl font-bold text-navy">{formatPrice(opt.price)}</span>
               </div>
-              <p className="text-sm text-muted">{opt.description}</p>
+              <p className="flex-1 text-sm leading-relaxed text-muted">{opt.description}</p>
               <button
                 onClick={() => guard(() => setBooking(opt))}
-                className="btn-primary mt-1 !py-2.5"
+                className="btn-primary mt-1"
               >
                 Reserver ce creneau <ArrowUpRight size={14} />
               </button>
@@ -73,9 +77,10 @@ export default function AccompagnementPage() {
       </section>
 
       {/* Correction de travaux */}
-      <section className="border-b border-line bg-white px-4 py-8 md:px-8">
-        <SectionTitle icon={FileCheck2}>Correction de travaux</SectionTitle>
-        <p className="mb-5 text-sm text-muted">
+      <section className="px-4 py-4 md:px-8">
+        <div className="mx-auto max-w-6xl rounded-[2.5rem] bg-mist px-5 py-12 sm:px-10">
+        <SectionTitle icon={FileCheck2} n={2}>Correction de travaux</SectionTitle>
+        <p className="mb-8 max-w-2xl text-muted">
           Envoie un devoir, un memoire, un projet de code ou une note de synthese : retour detaille
           sous 48h.
         </p>
@@ -90,12 +95,13 @@ export default function AccompagnementPage() {
           loading={submitWork.loading}
           error={submitWork.error}
         />
+        </div>
       </section>
 
       {/* Sessions Q&R */}
-      <section className="bg-white px-4 py-8 md:px-8">
-        <SectionTitle icon={Radio}>Sessions Q&R en direct</SectionTitle>
-        <p className="mb-5 text-sm text-muted">
+      <section className="mx-auto max-w-6xl px-4 py-12 md:px-8">
+        <SectionTitle icon={Radio} n={3}>Sessions Q&R en direct</SectionTitle>
+        <p className="mb-8 max-w-2xl text-muted">
           Des creneaux collectifs en visio pour poser tes questions en direct, gratuits pour les
           inscrits.
         </p>
@@ -105,14 +111,17 @@ export default function AccompagnementPage() {
           {sessions.data?.map((s) => (
             <div
               key={s.id}
-              className="flex flex-col gap-3 rounded-lg border border-line p-4 md:flex-row md:items-center md:gap-6"
+              className="card flex flex-col gap-4 p-5 md:flex-row md:items-center md:gap-6 md:p-6"
             >
-              <div className="flex w-full shrink-0 items-center gap-2 text-sm font-medium text-gray-700 md:w-48">
-                <Calendar size={14} className="text-accent" /> {s.date}
+              <div className="flex w-full shrink-0 items-center gap-3 font-display text-sm font-semibold text-navy md:w-52">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sun/25 text-navy">
+                  <Calendar size={16} />
+                </span>
+                {s.date}
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium">{s.topic}</p>
-                <p className="mt-0.5 text-xs text-gray-400">
+                <p className="font-semibold text-navy">{s.topic}</p>
+                <p className="mt-1 text-xs font-medium text-muted">
                   {s.time} · {s.spots_left} places restantes
                 </p>
               </div>
@@ -125,7 +134,7 @@ export default function AccompagnementPage() {
                   })
                 }
                 disabled={registerQa.loading || s.spots_left <= 0}
-                className="shrink-0 rounded-md border border-accent px-4 py-2 text-sm font-medium text-accent disabled:opacity-50"
+                className="btn-outline shrink-0 !py-2.5"
               >
                 S'inscrire
               </button>
@@ -137,7 +146,7 @@ export default function AccompagnementPage() {
       {booking && (
         <Modal title={`Reserver — ${booking.label}`} size="sm" onClose={() => setBooking(null)}>
           <div className="p-6">
-            <p className="mb-4 flex items-center gap-2 text-sm text-emerald-600">
+            <p className="mb-4 flex items-center gap-2 text-sm font-medium text-emerald-600">
               <CheckCircle2 size={16} /> Creneau disponible cette semaine
             </p>
             <p className="text-sm text-muted">
@@ -165,7 +174,7 @@ export default function AccompagnementPage() {
       {feedback && (
         <Modal title="C'est note" size="sm" onClose={() => setFeedback(null)}>
           <div className="p-6">
-            <p className="flex items-center gap-2 text-sm text-gray-700">
+            <p className="flex items-center gap-2 text-sm text-navy">
               <CheckCircle2 size={16} className="text-emerald-600" /> {feedback}
             </p>
             <button onClick={() => setFeedback(null)} className="btn-primary mt-5 w-full">
@@ -178,11 +187,16 @@ export default function AccompagnementPage() {
   );
 }
 
-function SectionTitle({ icon: Icon, children }) {
+function SectionTitle({ icon: Icon, n, children }) {
   return (
-    <div className="mb-1 flex items-center gap-2">
-      <Icon size={18} className="text-accent" />
-      <p className="text-sm font-semibold uppercase tracking-wide text-muted">{children}</p>
+    <div className="mb-4 flex items-center gap-4">
+      <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-navy text-white">
+        <Icon size={22} />
+        <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-sun font-display text-[11px] font-bold text-navy">
+          {n}
+        </span>
+      </span>
+      <h2 className="text-2xl font-bold text-navy sm:text-3xl">{children}</h2>
     </div>
   );
 }
@@ -200,13 +214,13 @@ function WorkSubmissionForm({ price, onSubmit, loading, error }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl rounded-lg border border-line p-5">
-      <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-line-strong p-6 text-center">
-        <FileCheck2 size={22} className="text-gray-400" />
-        <span className="text-sm font-medium">
+    <form onSubmit={handleSubmit} className="card flex max-w-2xl flex-col gap-5 p-6 sm:p-8">
+      <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-accent/30 bg-accent-soft/40 p-8 text-center transition hover:border-accent">
+        <FileCheck2 size={26} className="text-accent" />
+        <span className="font-display text-sm font-semibold text-navy">
           {file ? file.name : "Depose ton fichier ici"}
         </span>
-        <span className="text-xs text-gray-400">PDF, Word, ou fichier de code — 10 Mo max</span>
+        <span className="text-xs text-muted">PDF, Word, ou fichier de code — 10 Mo max</span>
         <input
           type="file"
           className="hidden"
@@ -214,7 +228,7 @@ function WorkSubmissionForm({ price, onSubmit, loading, error }) {
           onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
       </label>
-      {touched && !file && <p className="mt-2 text-xs text-red-600">Choisis un fichier a envoyer.</p>}
+      {touched && !file && <p className="-mt-3 text-xs text-red-600">Choisis un fichier a envoyer.</p>}
 
       <Field label="Contexte" hint="Un mot sur ce que tu attends de cette correction.">
         <textarea
@@ -225,11 +239,13 @@ function WorkSubmissionForm({ price, onSubmit, loading, error }) {
         />
       </Field>
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <div className="mt-4 flex items-center justify-between">
-        <span className="text-sm font-semibold">{formatPrice(price)} / correction</span>
-        <button type="submit" className="btn-primary !px-4 !py-2.5" disabled={loading}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="font-display text-lg font-bold text-navy">
+          {formatPrice(price)} <span className="text-sm font-medium text-muted">/ correction</span>
+        </span>
+        <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? "Envoi…" : "Envoyer pour correction"}
         </button>
       </div>

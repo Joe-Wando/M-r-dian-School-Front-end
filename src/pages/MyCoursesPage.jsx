@@ -1,50 +1,61 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import api from "../api";
 import { useApi } from "../hooks/useApi";
 import Spinner from "../components/ui/Spinner";
 import ErrorState from "../components/ui/ErrorState";
 import CategoryBadge from "../components/ui/CategoryBadge";
+import PageHeader from "../components/ui/PageHeader";
+import { Underlined } from "../components/ui/Decor";
 
 export default function MyCoursesPage() {
   const { data, loading, error, reload } = useApi(() => api.myCourses(), []);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 md:px-8">
-      <h1 className="text-2xl font-semibold md:text-3xl">Mes cours</h1>
-      <p className="mt-1.5 text-sm text-muted">Reprends la ou tu t'es arrete.</p>
+    <div>
+      <PageHeader
+        eyebrow="Mon espace"
+        title={<Underlined>Mes cours</Underlined>}
+        subtitle="Reprends la ou tu t'es arrete."
+      />
 
-      {loading && <Spinner />}
-      {error && <ErrorState message={error} onRetry={reload} />}
+      <div className="mx-auto max-w-4xl px-4 py-6 md:px-8">
+        {loading && <Spinner />}
+        {error && <ErrorState message={error} onRetry={reload} />}
 
-      {data && data.length === 0 && (
-        <div className="mt-8 rounded-lg border border-line bg-white p-8 text-center text-sm text-muted">
-          Tu n'es inscrit a aucun cours pour l'instant.{" "}
-          <Link to="/catalogue" className="font-medium text-accent">
-            Parcourir le catalogue
-          </Link>
-        </div>
-      )}
-
-      {data && data.length > 0 && (
-        <div className="mt-6 flex flex-col gap-3">
-          {data.map(({ course, progress }) => (
-            <Link
-              key={course.id}
-              to={`/cours/${course.id}/apprendre`}
-              className="flex flex-col gap-2 rounded-lg border border-line bg-white p-4 transition-shadow hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <CategoryBadge category={course.category} level={course.level} />
-                <span className="text-xs font-medium text-muted">{progress}%</span>
-              </div>
-              <p className="font-semibold">{course.title}</p>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
-                <div className="h-full rounded-full bg-accent" style={{ width: `${progress}%` }} />
-              </div>
+        {data && data.length === 0 && (
+          <div className="card flex flex-col items-center gap-5 p-10 text-center">
+            <p className="text-muted">Tu n'es inscrit a aucun cours pour l'instant.</p>
+            <Link to="/catalogue" className="btn-primary">
+              Parcourir le catalogue <ArrowRight size={15} />
             </Link>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+
+        {data && data.length > 0 && (
+          <div className="flex flex-col gap-4">
+            {data.map(({ course, progress }) => (
+              <Link
+                key={course.id}
+                to={`/cours/${course.id}/apprendre`}
+                className="group card flex flex-col gap-3 p-6 transition hover:-translate-y-0.5 hover:shadow-xl"
+              >
+                <div className="flex items-center justify-between">
+                  <CategoryBadge category={course.category} level={course.level} />
+                  <span className="font-display text-sm font-bold text-accent">{progress}%</span>
+                </div>
+                <p className="font-display text-lg font-semibold text-navy">{course.title}</p>
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-mist">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-accent to-navy"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { useApi } from "../hooks/useApi";
 import Spinner from "../components/ui/Spinner";
 import ErrorState from "../components/ui/ErrorState";
 import { catStyle } from "../lib/theme";
+import PageHeader from "../components/ui/PageHeader";
+import { Underlined } from "../components/ui/Decor";
 
 export default function ProfilPage() {
   const { data: profile, loading, error, reload } = useApi(() => api.getProfile(), []);
@@ -17,43 +19,41 @@ export default function ProfilPage() {
 
   return (
     <div>
-      <header className="border-b border-line bg-white px-4 pb-8 pt-12 md:px-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end">
-          <div className="relative flex aspect-video w-full shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ink md:w-56">
-            <PlayCircle size={40} className="text-white" />
-            <span className="absolute bottom-2 left-2 rounded-full bg-white/15 px-2 py-0.5 text-[10px] text-white">
+      <PageHeader eyebrow="A propos" title={profile.name} subtitle={profile.bio}>
+        <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center">
+          <div className="relative flex aspect-video w-full shrink-0 -rotate-2 items-center justify-center overflow-hidden rounded-3xl border-4 border-white/90 bg-gradient-to-br from-accent to-navy-dark shadow-2xl shadow-black/30 md:w-64">
+            <PlayCircle size={44} strokeWidth={1.5} className="text-white" />
+            <span className="absolute bottom-2.5 left-2.5 rounded-full bg-white/15 px-2.5 py-0.5 font-display text-[10px] font-semibold text-white">
               Pitch — 45 sec
             </span>
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-semibold md:text-4xl">{profile.name}</h1>
-            <p className="mt-2 max-w-xl text-base text-muted">{profile.bio}</p>
-            <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-400">
+            <div className="flex flex-wrap gap-3 text-sm font-medium text-white/80">
               {profile.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin size={14} /> {profile.location}
+                <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
+                  <MapPin size={14} className="text-sun" /> {profile.location}
                 </span>
               )}
               {profile.email_contact && (
-                <span className="flex items-center gap-1">
-                  <Mail size={14} /> {profile.email_contact}
+                <span className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5">
+                  <Mail size={14} className="text-sun" /> {profile.email_contact}
                 </span>
               )}
             </div>
           </div>
           {profile.cv_url && (
-            <a href={profile.cv_url} download className="btn-primary shrink-0 !py-2.5">
+            <a href={profile.cv_url} download className="btn-accent shrink-0">
               <Download size={15} /> Telecharger le CV
             </a>
           )}
         </div>
-      </header>
+      </PageHeader>
 
       <Section title="Parcours">
-        <div className="flex flex-col">
+        <div className="card flex flex-col px-6 py-2 sm:px-8">
           {(profile.timeline || []).map((item, i) => (
-            <div key={i} className="flex gap-4 border-t border-gray-100 py-3.5 md:gap-8">
-              <span className="w-28 shrink-0 pt-1 text-xs text-gray-400">{item.year}</span>
+            <div key={i} className="flex gap-4 border-t border-line py-5 first:border-t-0 md:gap-8">
+              <span className="w-28 shrink-0 pt-1 font-display text-xs font-semibold text-accent">{item.year}</span>
               <div className="flex items-start gap-3">
                 {item.type === "formation" ? (
                   <GraduationCap size={16} className="mt-0.5 text-blue-700" />
@@ -61,7 +61,7 @@ export default function ProfilPage() {
                   <Briefcase size={16} className="mt-0.5 text-emerald-600" />
                 )}
                 <div>
-                  <p className="text-base font-medium">{item.title}</p>
+                  <p className="text-base font-semibold text-navy">{item.title}</p>
                   <p className="text-sm text-muted">{item.place}</p>
                 </div>
               </div>
@@ -71,17 +71,17 @@ export default function ProfilPage() {
       </Section>
 
       <Section title="Competences">
-        <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2">
+        <div className="card grid grid-cols-1 gap-x-10 gap-y-6 p-6 sm:p-8 md:grid-cols-2">
           {Object.entries(skillsByCat).map(([cat, skills]) => (
             <div key={cat}>
-              <p className="mb-2 text-xs font-semibold" style={{ color: catStyle(cat).text }}>
+              <p className="mb-3 font-display text-xs font-bold tracking-wide" style={{ color: catStyle(cat).text }}>
                 {cat.toUpperCase()}
               </p>
               <div className="flex flex-wrap gap-2">
                 {skills.map((s) => (
                   <span
                     key={s.name}
-                    className="rounded-full px-3 py-1.5 text-sm"
+                    className="rounded-full px-3.5 py-1.5 text-sm font-medium"
                     style={{ background: catStyle(cat).tint, color: catStyle(cat).text }}
                   >
                     {s.name}
@@ -94,37 +94,40 @@ export default function ProfilPage() {
       </Section>
 
       <Section title="Travaux et realisations">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {(profile.works || []).map((w) => (
             <a
               key={w.id}
               href={w.link || "#"}
-              className="flex flex-col gap-2 rounded-lg border border-line p-4 transition-shadow hover:shadow-md"
+              className="group card flex flex-col gap-3 p-6 transition hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="flex items-center justify-between">
                 <span
-                  className="rounded-full px-2 py-1 text-xs font-medium"
+                  className="rounded-full px-3 py-1 font-display text-[11px] font-semibold"
                   style={{ background: catStyle(w.category).tint, color: catStyle(w.category).text }}
                 >
                   {w.category}
                 </span>
-                <ArrowUpRight size={15} className="text-gray-400" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-navy text-white transition group-hover:bg-accent">
+                  <ArrowUpRight size={15} />
+                </span>
               </div>
-              <p className="text-base font-semibold">{w.title}</p>
+              <p className="font-display text-lg font-semibold text-navy">{w.title}</p>
               <p className="text-sm text-muted">{w.description}</p>
             </a>
           ))}
         </div>
       </Section>
 
-      <section className="flex items-center justify-between bg-white px-4 py-8 md:px-8">
-        <p className="text-sm text-muted">Une question, un projet en tete ?</p>
-        <Link
-          to="/contact"
-          className="rounded-md border border-accent px-4 py-2 text-sm font-medium text-accent"
-        >
-          Voir la page Contact
-        </Link>
+      <section className="px-4 pb-4 pt-6 md:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 rounded-[2.5rem] bg-accent px-8 py-10 text-center md:flex-row md:text-left">
+          <p className="font-display text-2xl font-bold text-white">
+            Une question, <Underlined>un projet</Underlined> en tete ?
+          </p>
+          <Link to="/contact" className="btn-primary shrink-0 !bg-white !text-navy hover:!bg-sun">
+            Voir la page Contact
+          </Link>
+        </div>
       </section>
     </div>
   );
@@ -132,9 +135,9 @@ export default function ProfilPage() {
 
 function Section({ title, children }) {
   return (
-    <section className="border-b border-line bg-white px-4 py-8 md:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-muted">{title}</p>
-      <div className="mt-4">{children}</div>
+    <section className="mx-auto max-w-6xl px-4 py-8 md:px-8">
+      <h2 className="text-2xl font-bold text-navy sm:text-3xl">{title}</h2>
+      <div className="mt-6">{children}</div>
     </section>
   );
 }

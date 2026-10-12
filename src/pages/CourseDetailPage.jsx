@@ -8,6 +8,7 @@ import Spinner from "../components/ui/Spinner";
 import ErrorState from "../components/ui/ErrorState";
 import CategoryBadge from "../components/ui/CategoryBadge";
 import { formatPrice } from "../lib/format";
+import PageHeader from "../components/ui/PageHeader";
 
 export default function CourseDetailPage() {
   const { id } = useParams();
@@ -40,59 +41,69 @@ export default function CourseDetailPage() {
   const busy = enroll.loading || checkout.loading;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
-      <button
-        onClick={() => navigate("/catalogue")}
-        className="mb-6 flex items-center gap-2 text-sm font-medium text-muted"
+    <div>
+      <PageHeader
+        title={course.title}
+        subtitle={course.description}
       >
-        <ArrowLeft size={15} /> Retour au catalogue
-      </button>
-
-      <CategoryBadge category={course.category} level={course.level} />
-      <h1 className="mt-3 text-2xl font-semibold md:text-3xl">{course.title}</h1>
-      <p className="mt-3 text-sm text-muted">{course.description}</p>
-
-      <div className="mt-5 flex gap-4 text-xs text-gray-400">
-        <span className="flex items-center gap-1">
-          <BarChart3 size={13} /> {course.level}
-        </span>
-        <span className="flex items-center gap-1">
-          <Clock size={13} /> {course.duration}
-        </span>
-        {course.template && <span>Modele : {course.template}</span>}
-      </div>
-
-      <div className="mt-6 rounded-lg border border-line bg-white p-5">
-        <p className="text-xl font-semibold">{formatPrice(course.price)}</p>
-        {(enroll.error || checkout.error) && (
-          <p className="mt-2 text-sm text-red-600">{enroll.error || checkout.error}</p>
-        )}
-        <button onClick={onStart} className="btn-primary mt-4 w-full" disabled={busy}>
-          {busy
-            ? "…"
-            : course.is_free
-              ? "Acceder au cours"
-              : `Acheter — ${formatPrice(course.price)}`}
-        </button>
-        {!course.is_free && (
-          <p className="mt-2 text-center text-xs text-muted">Paiement securise via Naboopay</p>
-        )}
-      </div>
-
-      {course.category === "Informatique" && (
-        <div className="mt-6 flex items-center gap-2 rounded-md bg-accent-soft px-3 py-2.5 text-xs text-accent">
-          <ExternalLink size={13} />
-          En fin de parcours, tu seras oriente vers une certification professionnelle externe si tu
-          souhaites aller plus loin.
+        <div className="mt-8 flex flex-wrap items-center gap-3 text-sm font-medium text-white/80">
+          <CategoryBadge category={course.category} level={course.level} />
+          <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5">
+            <BarChart3 size={14} className="text-sun" /> {course.level}
+          </span>
+          <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5">
+            <Clock size={14} className="text-sun" /> {course.duration}
+          </span>
+          {course.template && (
+            <span className="rounded-full bg-white/10 px-3 py-1.5">Modele : {course.template}</span>
+          )}
         </div>
-      )}
+      </PageHeader>
 
-      <p className="mt-8 text-sm text-muted">
-        Deja inscrit ?{" "}
-        <Link to={`/cours/${id}/apprendre`} className="font-medium text-accent">
-          Ouvrir la lecture du cours
-        </Link>
-      </p>
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-4 md:px-8 lg:grid-cols-[1fr_22rem]">
+        <div>
+          <button
+            onClick={() => navigate("/catalogue")}
+            className="btn-outline !px-4 !py-2.5"
+          >
+            <ArrowLeft size={15} /> Retour au catalogue
+          </button>
+
+          {course.category === "Informatique" && (
+            <div className="mt-6 flex items-center gap-2 rounded-2xl bg-accent-soft px-4 py-3 text-xs font-medium text-accent">
+              <ExternalLink size={14} className="shrink-0" />
+              En fin de parcours, tu seras oriente vers une certification professionnelle externe si tu
+              souhaites aller plus loin.
+            </div>
+          )}
+
+          <p className="mt-6 text-sm text-muted">
+            Deja inscrit ?{" "}
+            <Link to={`/cours/${id}/apprendre`} className="font-semibold text-accent">
+              Ouvrir la lecture du cours
+            </Link>
+          </p>
+        </div>
+
+        <div className="card relative overflow-hidden p-7 lg:-mt-24">
+          <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-sun" />
+          <p className="eyebrow">{course.is_free ? "Acces libre" : "Cours complet"}</p>
+          <p className="mt-2 font-display text-3xl font-bold text-navy">{formatPrice(course.price)}</p>
+          {(enroll.error || checkout.error) && (
+            <p className="mt-2 text-sm text-red-600">{enroll.error || checkout.error}</p>
+          )}
+          <button onClick={onStart} className="btn-primary mt-6 w-full !py-4" disabled={busy}>
+            {busy
+              ? "…"
+              : course.is_free
+                ? "Acceder au cours"
+                : `Acheter — ${formatPrice(course.price)}`}
+          </button>
+          {!course.is_free && (
+            <p className="mt-3 text-center text-xs text-muted">Paiement securise via Naboopay</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

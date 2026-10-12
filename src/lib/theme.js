@@ -1,12 +1,12 @@
 // Design system Meredian — tokens partages (charte-graphique-meridian.md)
 
 export const COLORS = {
-  ground: "#F9FAFB",
-  ink: "#1A1A1A",
-  muted: "#6B7280",
+  ground: "#F6F2E6",
+  ink: "#0B1F4D",
+  muted: "#5B6684",
   accent: "#0056D2",
-  line: "#E5E7EB",
-  lineStrong: "#D1D5DB",
+  line: "#E6DFCD",
+  lineStrong: "#D5CBB3",
 };
 
 // Couleurs par matiere — orientent dans le contenu, pas la marque.

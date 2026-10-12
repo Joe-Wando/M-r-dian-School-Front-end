@@ -4,7 +4,7 @@ export default function CategoryBadge({ category, level, className = "" }) {
   const c = catStyle(category);
   return (
     <span
-      className={`inline-block w-fit rounded-full px-2 py-1 text-xs font-medium ${className}`}
+      className={`inline-block w-fit rounded-full px-3 py-1 font-display text-[11px] font-semibold ${className}`}
       style={{ background: c.tint, color: c.text }}
     >
       {category}

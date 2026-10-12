@@ -64,7 +64,7 @@ export default function CoursePlayerPage() {
       <div className="flex items-center justify-between border-b border-line bg-white px-4 py-3 md:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm font-medium text-muted"
+          className="flex items-center gap-2 rounded-full px-3 py-1.5 font-display text-xs font-semibold text-navy transition hover:bg-mist"
         >
           <ArrowLeft size={15} /> Retour
         </button>
@@ -90,7 +90,7 @@ export default function CoursePlayerPage() {
           {course.pdf_resource_url !== null && (
             <a
               href={course.pdf_resource_url || "#"}
-              className="btn-outline mt-6 w-fit !px-4 !py-2.5"
+              className="btn-outline mt-6 w-fit"
               download
             >
               <FileDown size={15} /> Telecharger le support PDF du cours
@@ -98,7 +98,7 @@ export default function CoursePlayerPage() {
           )}
 
           {course.category === "Informatique" && (
-            <div className="mt-6 flex items-center gap-2 rounded-md bg-accent-soft px-3 py-2.5 text-xs text-accent">
+            <div className="mt-6 flex items-center gap-2 rounded-2xl bg-accent-soft px-4 py-3 text-xs font-medium text-accent">
               <ExternalLink size={13} />
               En fin de parcours, tu seras oriente vers une certification professionnelle externe si
               tu souhaites aller plus loin.

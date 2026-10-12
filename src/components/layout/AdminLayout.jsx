@@ -12,30 +12,30 @@ export default function AdminLayout({ children }) {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-full bg-slate-100">
-      <header className="flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-900 px-4 py-3 md:px-8">
+    <div className="min-h-full bg-ground">
+      <header className="flex items-center justify-between gap-4 bg-navy px-4 py-3 md:px-8">
         <div className="flex items-center gap-3">
-          <Logo variant="icon" to="/admin" muted />
-          <span className="text-sm font-semibold tracking-tight text-white">
-            Meredian <span className="font-normal text-slate-400">— Admin</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white"><Logo variant="icon" to="/admin" /></span>
+          <span className="font-display text-sm font-semibold tracking-tight text-white">
+            Meredian <span className="font-normal text-sun">— Admin</span>
           </span>
         </div>
 
         <div className="flex items-center gap-4">
           <Link
             to="/"
-            className="flex items-center gap-1.5 text-sm font-medium text-slate-300 hover:text-white"
+            className="flex items-center gap-1.5 text-sm font-medium text-white/75 hover:text-white"
           >
             <ArrowLeft size={14} /> Retour au site
           </Link>
-          <div className="flex items-center gap-2 border-l border-slate-700 pl-4">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-xs font-medium text-white">
+          <div className="flex items-center gap-2 border-l border-white/15 pl-4">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent font-display text-xs font-semibold text-white">
               {initials(user?.name)}
             </span>
             <button
               onClick={logout}
               aria-label="Se deconnecter"
-              className="text-slate-400 hover:text-white"
+              className="text-white/60 hover:text-white"
             >
               <LogOut size={16} />
             </button>
