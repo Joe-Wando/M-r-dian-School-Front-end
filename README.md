@@ -4,8 +4,16 @@ Frontend de **Meredian**, plateforme personnelle qui combine :
 
 - un **catalogue de cours** en ligne (Histoire, Droit, Informatique, RH — gratuits et payants) ;
 - un **espace d'accompagnement** (mentorat, correction de travaux, sessions Q&R) ;
-- une **vitrine professionnelle** (parcours, competences, travaux, pitch video) ;
-- un **tableau de bord admin** (CRUD cours / modules / sections, prix, messages).
+- une **vitrine professionnelle** (parcours, competences, travaux, pitch video).
+
+L'administration (cours, corrections, mentorat, sessions Q&R, messages) vit dans une app
+separee : **`Mérédian_School_Dashboard`**.
+
+| App | Dossier | Port |
+|---|---|---|
+| Site public | `Mérédian_School_Front_end` | 5180 |
+| Dashboard | `Mérédian_School_Dashboard` | 5181 |
+| API NestJS | `Mérédian_School_Back end` | 4000 |
 
 Construit a partir du prototype valide (`plateforme-app-prototype.jsx`) : meme design, meme
 logique, mais transforme en application reelle — vrai routing, composants separes, appels API,
@@ -35,7 +43,7 @@ Pre-requis : Node 18+ et npm.
 ```bash
 npm install
 cp .env.example .env      # sous Windows PowerShell : copy .env.example .env
-npm run dev               # http://localhost:5173
+npm run dev               # http://localhost:5180
 ```
 
 ### Variables d'environnement (`.env`)
@@ -44,6 +52,7 @@ npm run dev               # http://localhost:5173
 |---|---|---|
 | `VITE_API_URL` | URL du backend NestJS, **prefixe `/api` inclus**. | `http://localhost:4000/api` |
 | `VITE_USE_MOCKS` | `false` = appels reels vers `VITE_API_URL` (backend requis). `true` = couche de donnees simulee en memoire, aucun backend. | `false` |
+| `VITE_DASHBOARD_URL` | URL du dashboard d'administration (bouton « Dashboard » affiche aux admins). | `http://localhost:5181` |
 
 **Par defaut le frontend est branche sur le backend NestJS.** Le lancer :
 
@@ -52,7 +61,7 @@ npm run dev               # http://localhost:5173
 npm run start:dev        # http://localhost:4000, apres migrate + seed
 ```
 
-Le backend accepte l'origine `http://localhost:5173` (CORS). La traduction entre le
+Le backend accepte l'origine `http://localhost:5180` (variable `CORS_ORIGIN` du backend). La traduction entre le
 contrat du frontend (snake_case, cf. `docs/architecture-technique.md`) et l'API
 NestJS (camelCase, quelques formes differentes) est faite dans `src/api/index.js`.
 
@@ -67,6 +76,9 @@ Pour developper sans backend, mettre `VITE_USE_MOCKS=true` : la couche mock
 | Backend (seed) | Utilisateur | `etudiant@meredian.io` | `Etudiant!2026` |
 | Mode mock | Admin | `admin@meredian.dev` | `admin1234` |
 | Mode mock | Utilisateur | `demo@meredian.dev` | `demo1234` |
+
+Les comptes admin servent a se connecter au **dashboard** (port 5181) ; sur le site public,
+ils voient seulement un bouton « Dashboard » dans la navbar.
 
 ### Autres commandes
 
@@ -99,12 +111,12 @@ src/
 │   └── format.js             # formatPrice, progression, initiales
 ├── components/
 │   ├── Logo.jsx              # icone seule / wordmark (regles de la charte)
-│   ├── RouteGuards.jsx       # RequireAuth, RequireAdmin
+│   ├── RouteGuards.jsx       # RequireAuth
 │   ├── CourseCard.jsx
 │   ├── layout/               # Navbar, Footer, Layout
-│   ├── ui/                   # Spinner, ErrorState, Modal, Field, CategoryBadge
-│   ├── course/               # CourseSidebar, SectionContent, UpsellCard, SectionIcon
-│   └── admin/                # CourseFormModal, ModuleManagerModal, SectionEditorModal
+│   ├── ui/                   # Spinner, ErrorState, Modal, Field, CategoryBadge,
+│   │                         # PageHeader, AuthShell, Decor (vagues, macarons, soulignes)
+│   └── course/               # CourseSidebar, SectionContent, UpsellCard, SectionIcon
 └── pages/
     ├── HomePage.jsx
     ├── CataloguePage.jsx           # filtres matiere/niveau + recherche (dans l'URL)
@@ -114,8 +126,7 @@ src/
     ├── ProfilPage.jsx
     ├── ContactPage.jsx
     ├── MyCoursesPage.jsx           # /mes-cours (protege)
-    ├── LoginPage.jsx · RegisterPage.jsx · NotFoundPage.jsx
-    └── admin/AdminDashboardPage.jsx  # /admin (protege par role)
+    └── LoginPage.jsx · RegisterPage.jsx · NotFoundPage.jsx
 ```
 
 ### Routes
@@ -131,7 +142,6 @@ src/
 | `/contact` | Formulaire de contact | public |
 | `/mes-cours` | Cours suivis + progression | connecte |
 | `/connexion`, `/inscription` | Auth | public |
-| `/admin` | Tableau de bord | role `admin` |
 
 ---
 
@@ -142,9 +152,9 @@ src/
   `Authorization: Bearer …` par l'intercepteur axios.
 - Au chargement, `AuthContext` appelle `GET /auth/me` pour restaurer la session.
 - Une reponse `401` vide la session et redirige vers `/connexion`.
-- L'interrupteur « Vue Admin » du prototype est remplace par une **vraie verification de role** :
-  `RequireAdmin` cote frontend **pour l'UX seulement** — la protection qui fait foi est le
-  middleware `requireAdmin` cote serveur (voir `docs/architecture-technique.md` §4).
+- L'administration n'est plus dans ce frontend : elle est dans `Mérédian_School_Dashboard`,
+  reserve au role `admin`. La protection qui fait foi reste cote serveur
+  (`RolesGuard` + `@Roles('admin')`, voir `docs/architecture-technique.md` §4).
 
 ---
 
@@ -197,7 +207,8 @@ fonctionnalite dans l'historique.
 ## Deploiement
 
 - **Frontend** : Vercel (Vite detecte automatiquement). Definir `VITE_API_URL` (URL publique du
-  backend) et `VITE_USE_MOCKS=false`.
+  backend), `VITE_DASHBOARD_URL` (URL publique du dashboard) et `VITE_USE_MOCKS=false`.
+- **Dashboard** : meme principe, deploye separement (voir son README).
 - **Backend + PostgreSQL** : Railway ou Render (voir `docs/architecture-technique.md`).
 
 ---
