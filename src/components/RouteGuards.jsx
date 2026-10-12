@@ -11,16 +11,3 @@ export function RequireAuth({ children }) {
   }
   return children;
 }
-
-export function RequireAdmin({ children }) {
-  const { isAuthenticated, isAdmin, ready } = useAuth();
-  const location = useLocation();
-  if (!ready) return <Spinner />;
-  if (!isAuthenticated) {
-    return <Navigate to="/connexion" state={{ from: location }} replace />;
-  }
-  if (!isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-}

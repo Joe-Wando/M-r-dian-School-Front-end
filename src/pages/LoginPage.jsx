@@ -77,7 +77,7 @@ export default function LoginPage() {
 
       {USE_MOCKS && (
         <p className="rounded-2xl bg-accent-soft px-4 py-3 text-center text-xs font-medium text-accent">
-          Demo — admin@meredian.dev / admin1234 · demo@meredian.dev / demo1234
+          Demo — demo@meredian.dev / demo1234
         </p>
       )}
     </AuthShell>

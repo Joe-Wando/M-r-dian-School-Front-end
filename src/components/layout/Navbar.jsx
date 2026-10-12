@@ -5,6 +5,9 @@ import Logo from "../Logo";
 import { useAuth } from "../../context/AuthContext";
 import { initials } from "../../lib/format";
 
+// L'administration vit dans une app separee (Mérédian_School_Dashboard).
+const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5181";
+
 const LINKS = [
   { label: "Accueil", to: "/" },
   { label: "Catalogue", to: "/catalogue" },
@@ -34,7 +37,7 @@ export default function Navbar() {
   useEffect(() => setMobileOpen(false), [pathname]);
 
   const dark = DARK_TOP.some((re) => re.test(pathname)) && !scrolled && !mobileOpen;
-  const links = isAdmin ? [...LINKS, { label: "Tableau de bord", to: "/admin" }] : LINKS;
+  const links = LINKS;
 
   function onSearch(e) {
     e.preventDefault();
@@ -112,12 +115,12 @@ export default function Navbar() {
           </form>
 
           {isAdmin && (
-            <Link
-              to="/admin"
+            <a
+              href={DASHBOARD_URL}
               className="hidden items-center gap-1.5 rounded-full bg-sun px-3 py-2 font-display text-xs font-semibold text-navy sm:flex"
             >
-              <LayoutDashboard size={13} /> Admin
-            </Link>
+              <LayoutDashboard size={13} /> Dashboard
+            </a>
           )}
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
