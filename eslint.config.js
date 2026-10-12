@@ -23,6 +23,7 @@ export default [
         btoa: "readonly",
         atob: "readonly",
         console: "readonly",
+        URL: "readonly",
         setTimeout: "readonly",
         clearTimeout: "readonly",
       },
